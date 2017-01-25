@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>com.Microsoft.RemoteControlVehicle</id>
+        <version>0.1.0.0</version>
+        <title>Remote Control Vehicle AllJoyn library</title>
+        <authors>Lou Amadio</authors>
+        <licenseUrl>https://github.com/ooeygui/uwp-remotecontrol/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/ooeygui/uwp-remotecontrol</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>This library assists makers in building Remote Control Vehicles by providing implementations of the AllJoyn RemoteControlVhicle interface for various remote control vehicles such as Cars, Boats,.Tanks and QuadCopters. A Maker can bind a simple interface to their specific system, and the library takes care of the rest.</description>
+    </metadata>
+    <files>
+        <file src="..\ARM\Release\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.dll" target="runtimes\win10-arm\native\Microsoft.Maker.Firmata.dll" />
+        <file src="..\ARM\Release\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.winmd" target="lib\uap10.0\Microsoft.Maker.Firmata.winmd" />
+
+        <file src="..\ARM\Release\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.dll" target="runtimes\win10-arm\native\Microsoft.Maker.RemoteWiring.dll" />
+        <file src="..\ARM\Release\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.winmd" target="lib\uap10.0\Microsoft.Maker.RemoteWiring.winmd" />
+
+        <file src="..\ARM\Release\Microsoft.Maker.Serial\Microsoft.Maker.Serial.dll" target="runtimes\win10-arm\native\Microsoft.Maker.Serial.dll" />
+        <file src="..\ARM\Release\Microsoft.Maker.Serial\Microsoft.Maker.Serial.winmd" target="lib\uap10.0\Microsoft.Maker.Serial.winmd" />
+
+        <file src="..\x64\Release\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.dll" target="runtimes\win10-x64\native\Microsoft.Maker.Firmata.dll" />
+
+        <file src="..\x64\Release\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.dll" target="runtimes\win10-x64\native\Microsoft.Maker.RemoteWiring.dll" />
+
+        <file src="..\x64\Release\Microsoft.Maker.Serial\Microsoft.Maker.Serial.dll" target="runtimes\win10-x64\native\Microsoft.Maker.Serial.dll" />
+
+        <file src="..\Release\Microsoft.Maker.Firmata\Microsoft.Maker.Firmata.dll" target="runtimes\win10-x86\native\Microsoft.Maker.Firmata.dll" />
+        <file src="..\Release\Microsoft.Maker.RemoteWiring\Microsoft.Maker.RemoteWiring.dll" target="runtimes\win10-x86\native\Microsoft.Maker.RemoteWiring.dll" />
+        <file src="..\Release\Microsoft.Maker.Serial\Microsoft.Maker.Serial.dll" target="runtimes\win10-x86\native\Microsoft.Maker.Serial.dll" />
+    </files>
+</package>

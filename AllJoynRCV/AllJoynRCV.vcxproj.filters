@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>2e50dbfb-9f66-41df-9109-f74c808bc0cc</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\AllJoynBusObjectManager.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\AllJoynHelpers.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\pch.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleConsumer.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleProducer.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleServiceEventAdapter.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleServiceEventArgs.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleSignals.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleWatcher.cpp" />
+    <ClCompile Include="com.microsoft.remotecontrolvehicle\TypeConversionHelpers.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\AllJoynBusObjectManager.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\AllJoynHelpers.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\IremotecontrolvehicleService.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\pch.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleConsumer.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleEventArgs.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleMethodResults.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleProducer.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleServiceEventAdapter.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleServiceEventArgs.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleSignals.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleStructures.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\remotecontrolvehicleWatcher.h" />
+    <ClInclude Include="com.microsoft.remotecontrolvehicle\TypeConversionHelpers.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="AllJoynRCVInterface.xml" />
+  </ItemGroup>
+</Project>

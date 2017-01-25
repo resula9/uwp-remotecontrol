@@ -1,0 +1,26 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+         "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.ooeygui.remotecontrolvehicle">
+    <property name="ReceiverName" type="s" access="read" />
+    <property name="Manufacturer" type="s" access="read" />
+    <property name="DeviceType" type="u" access="read" />
+    <property name="Channels" type="a(uuus)" access="read" />
+    <method name="GetAnalogChannelData">
+      <arg name="channelId" type="u" direction="in" />
+      <arg name="analogChannelData" type="ddddd" direction="out"/>
+    </method>
+    <method name="SetAnalogChannelState">
+      <arg name="channelId" type="u" direction="in"/>
+      <arg name="value" type="d" direction="in"/>
+    </method>
+    <method name="SetToggleChannelState">
+      <arg name="channelId" type="u" direction="in"/>
+      <arg name="value" type="u" direction="in"/>
+    </method>
+    <method name="SetMultipleAnalogChannelStates">
+      <arg name="channelIds" type="au" direction="in"/>
+      <arg name="values" type="ad" direction="in"/>
+    </method>
+  </interface>
+</node>

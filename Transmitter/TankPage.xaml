@@ -1,0 +1,14 @@
+﻿<Page x:Name="page"
+    x:Class="Transmitter.TankPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Transmitter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Slider x:Name="throttleLeft" HorizontalAlignment="Left" Margin="117,10,0,10" Width="39" Orientation="Vertical" Minimum="-100" Maximum="100" Value="{Binding leftThrottle, Mode=TwoWay}"/>
+        <Slider x:Name="throttleRight" HorizontalAlignment="Right" Margin="0,10,117,10" Width="39" Orientation="Vertical" Minimum="-100" Maximum="100" Value="{Binding rightThrottle, Mode=TwoWay}"/>
+    </Grid>
+</Page>

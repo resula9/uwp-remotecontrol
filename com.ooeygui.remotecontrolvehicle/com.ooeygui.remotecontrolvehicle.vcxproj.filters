@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>490a258b-aa05-4ac8-85da-7ab010a891d4</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="AllJoynBusObjectManager.cpp" />
+    <ClCompile Include="AllJoynHelpers.cpp" />
+    <ClCompile Include="remotecontrolvehicleConsumer.cpp" />
+    <ClCompile Include="remotecontrolvehicleLegacySignals.cpp" />
+    <ClCompile Include="remotecontrolvehicleProducer.cpp" />
+    <ClCompile Include="remotecontrolvehicleServiceEventAdapter.cpp" />
+    <ClCompile Include="remotecontrolvehicleServiceEventArgs.cpp" />
+    <ClCompile Include="remotecontrolvehicleSignals.cpp" />
+    <ClCompile Include="TypeConversionHelpers.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="AllJoynBusObjectManager.h" />
+    <ClInclude Include="AllJoynHelpers.h" />
+    <ClInclude Include="IremotecontrolvehicleService.h" />
+    <ClInclude Include="remotecontrolvehicleConsumer.h" />
+    <ClInclude Include="remotecontrolvehicleEventArgs.h" />
+    <ClInclude Include="remotecontrolvehicleLegacySignals.h" />
+    <ClInclude Include="remotecontrolvehicleMethodResults.h" />
+    <ClInclude Include="remotecontrolvehicleProducer.h" />
+    <ClInclude Include="remotecontrolvehicleServiceEventAdapter.h" />
+    <ClInclude Include="remotecontrolvehicleServiceEventArgs.h" />
+    <ClInclude Include="remotecontrolvehicleSignals.h" />
+    <ClInclude Include="remotecontrolvehicleStructures.h" />
+    <ClInclude Include="TypeConversionHelpers.h" />
+  </ItemGroup>
+</Project>
