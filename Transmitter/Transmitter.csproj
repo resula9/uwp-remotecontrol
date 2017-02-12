@@ -18,7 +18,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Transmitter_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>1158121968BFC1D39E2100043CA834B3CE2A00B8</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>5A0541774AED35B2074E138C5BADC317C2255B78</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>

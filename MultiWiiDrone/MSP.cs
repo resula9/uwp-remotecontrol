@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -22,7 +23,7 @@ namespace MultiWiiDrone
             public Vector3 magnetometer;
         };
 
-        enum Channels
+        public enum Channels
         {
             Roll,
             Pitch,
@@ -36,29 +37,11 @@ namespace MultiWiiDrone
 
         public IMU imu;
 
-        Dictionary<Channels, UInt16> receiver = new Dictionary<Channels, UInt16>();
+        public Dictionary<Channels, UInt16> receiver = new Dictionary<Channels, UInt16>();
 
-        public void Arm()
-        {
-            setChannel(Channels.Arm, kChannelArmValue);
-        }
+        public delegate void RCChannelsUpdatedDelegate();
 
-        public void Disarm()
-        {
-            setChannel(Channels.Arm, kChannelDisarmValue);
-        }
-
-        public void ToggleArm()
-        {
-            if (receiver[Channels.Arm] == kChannelArmValue)
-            {
-                Disarm();
-            }
-            else
-            {
-                Arm();
-            }
-        }
+        public event RCChannelsUpdatedDelegate ChannelDelegate;
 
         private enum MSP_Op : byte
         {
@@ -116,22 +99,23 @@ namespace MultiWiiDrone
         private DataWriter writer = null;
         private DataReader reader = null;
 
-        const UInt16 kStickMin = 800;
-        const UInt16 kStickMax = 2115;
-        const UInt16 kChannelArmValue = 1024;
-        const UInt16 kChannelDisarmValue = 1500;
+        const UInt16 kStickMin = 1000;
+        const UInt16 kStickMid = 1500;
+        const UInt16 kStickMax = 2000;
+        const UInt16 kChannelArmValue = 1500;
+        const UInt16 kChannelDisarmValue = 800;
         const UInt16 kChannelCount = 8;
 
         public MSP()
         {
-            receiver[Channels.Roll] = kStickMin;
-            receiver[Channels.Pitch] = kStickMin;
-            receiver[Channels.Yaw] = kStickMin;
+            receiver[Channels.Roll] = kStickMid;
+            receiver[Channels.Pitch] = kStickMid;
+            receiver[Channels.Yaw] = kStickMid;
             receiver[Channels.Throttle] = kStickMin;
             receiver[Channels.Arm] = kStickMin;
-            receiver[Channels.Aux2] = kStickMin;
-            receiver[Channels.Aux3] = kStickMin;
-            receiver[Channels.Aux4] = kStickMin;
+            receiver[Channels.Aux2] = kStickMid;
+            receiver[Channels.Aux3] = kStickMid;
+            receiver[Channels.Aux4] = kStickMid;
         }
 
         public async Task connect(string identifyingSubStr = "UART0")
@@ -156,14 +140,16 @@ namespace MultiWiiDrone
                         _device.Handshake = SerialHandshake.None;
                         _device.ReadTimeout = TimeSpan.FromSeconds(5);
                         _device.WriteTimeout = TimeSpan.FromSeconds(5);
-                        //_device.Handshake = SerialHandshake.RequestToSendXOnXOff;
-                        //_device.IsDataTerminalReadyEnabled = true;
 
                         writer = new DataWriter(_device.OutputStream);
                         reader = new DataReader(_device.InputStream);
                         reader.InputStreamOptions = InputStreamOptions.Partial;
 
                         startWatchingResponses();
+
+
+                        await sendIdent();
+                        await getRCState();
 
                         return;
                     }
@@ -189,11 +175,160 @@ namespace MultiWiiDrone
             Outbound
         };
 
+        public void Arm()
+        {
+            setChannel(Channels.Arm, kChannelArmValue);
+        }
+
+        public void Disarm()
+        {
+            setChannel(Channels.Arm, kChannelDisarmValue);
+        }
+
+        public void ToggleArm()
+        {
+            if (receiver[Channels.Arm] == kChannelArmValue)
+            {
+                Disarm();
+            }
+            else
+            {
+                Arm();
+            }
+        }
+
+        public double Throttle
+        {
+            get
+            {
+                var rawThrottle = receiver[Channels.Throttle];
+                double throttle = (rawThrottle - kStickMin) / (double)(kStickMax - kStickMin);
+
+                return throttle;
+            }
+
+            set
+            {
+
+                setThrottleChannel(Channels.Throttle, value);
+            }
+        }
+
+        public double Yaw
+        {
+            get
+            {
+                var rawYaw = receiver[Channels.Yaw];
+                double yaw = (rawYaw - kStickMin) / (double)(kStickMax - kStickMin);
+
+                return yaw;
+            }
+
+            set
+            {
+
+                setChannel(Channels.Yaw, value);
+            }
+        }
+
+        public double Roll
+        {
+            get
+            {
+                var rawRoll = receiver[Channels.Roll];
+                double roll = (rawRoll - kStickMin) / (double)(kStickMax - kStickMin);
+
+                return roll;
+            }
+
+            set
+            {
+
+                setChannel(Channels.Roll, value);
+            }
+        }
+
+        public double Pitch
+        {
+            get
+            {
+                var rawPitch = receiver[Channels.Pitch];
+                double pitch = (rawPitch - kStickMin) / (double)(kStickMax - kStickMin);
+
+                return pitch;
+            }
+
+            set
+            {
+
+                setChannel(Channels.Pitch, value);
+            }
+        }
+
+        private async Task sendIdent()
+        {
+            await sendMessage(MSP_Op.Identify);
+        }
+
+        private async Task getRCState()
+        {
+            await sendMessage(MSP_Op.RC);
+        }
+
+        private async Task sendMessage(MSP_Op op, byte[] bytes = null)
+        {
+            byte opCode = (byte)op;
+            byte dataLength = 0;
+            if (bytes != null)
+            {
+                if (bytes.Length > 255)
+                {
+                    Debug.WriteLine("Sending a message longer than an MSP message");
+                    return;
+                }
+                else
+                {
+                    dataLength = (byte)bytes.Length;
+                }
+            }
+            writer.WriteByte(36); // $
+            writer.WriteByte(77); // M
+            writer.WriteByte(60); // < 
+            writer.WriteByte(dataLength);
+            writer.WriteByte(opCode);
+
+            byte checksum = (byte)(dataLength ^ opCode);
+
+            if (dataLength == 0)
+            {
+                writer.WriteByte(checksum);
+            }
+            else
+            {
+                foreach (var b in bytes)
+                {
+                    writer.WriteByte(b);
+
+                    checksum ^= b;
+                }
+                writer.WriteByte(checksum);
+            }
+
+            await writer.StoreAsync();
+        }
+
         private void setChannel(Channels channel, UInt16 value)
         {
+            if (writer == null)
+            {
+                return;
+            }
+
             Task t = Task.Run(async () =>
             {
                 receiver[channel] = value;
+                MemoryStream stream = new MemoryStream();
+                BinaryWriter byteWriter = new BinaryWriter(stream);
                 writer.WriteByte(36);
                 writer.WriteByte(77);
                 writer.WriteByte(60);
@@ -204,19 +339,36 @@ namespace MultiWiiDrone
 
                 for (UInt16 i = 0; i < kChannelCount; i++)
                 {
-                    writer.WriteUInt16(values[i]);
+                    byteWriter.Write(values[i]);
                 }
 
-                await writer.StoreAsync();
+                await sendMessage(MSP_Op.SetRawRCChannels, stream.ToArray());
+                await getRCState();
             });
         }
 
-        private void setChannel(Channels channel, float value)
+        private void setThrottleChannel(Channels channel, double value)
         {
-            float f = (value * (float)(kStickMax - kStickMin));
+            double f = (value * (double)(kStickMax - kStickMin));
             UInt16 val = (UInt16)(f + kStickMin);
 
-            setChannel(channel, value);
+            setChannel(channel, val);
+        }
+
+        private void setChannel(Channels channel, double value)
+        {
+            UInt16 val;
+            if (value < 0.0)
+            {
+                double f = (value * (double)(kStickMid - kStickMin)) + kStickMid;
+                val = (UInt16)(Math.Abs(f));
+            }
+            else
+            {
+                double f = (value * (double)(kStickMax - kStickMid));
+                val = (UInt16)(f + kStickMid);
+            }
+            setChannel(channel, val);
         }
 
         private const byte MspPayloadSize = 255;
@@ -225,11 +377,14 @@ namespace MultiWiiDrone
         {
             Task t = Task.Run(async () =>
             {
+                byte[] messagehistory = new byte[1024000];
+                ReadState[] statehistory = new ReadState[1024000];
+                uint messagehistoryindex = 0;
                 byte[] payload = new byte[MspPayloadSize];
-                uint offset = 0;
                 ReadState readState = ReadState.Idle;
-                MessageDirection direction = MessageDirection.Inbound;
+                //MessageDirection direction = MessageDirection.Inbound;
                 byte checksum = 0;
+                byte specifiedChecksum = 0;
                 byte messageLengthExpectation = 0;
                 byte messageIndex = 0;
 
@@ -239,17 +394,16 @@ namespace MultiWiiDrone
                 {
                     var result = await reader.LoadAsync(1);
                     byte readByte = reader.ReadByte();
+                    messagehistory[messagehistoryindex] = readByte;
+                    statehistory[messagehistoryindex] = readState;
+                    messagehistoryindex++;
+
                     switch (readState)
                     {
                         case ReadState.Idle:
                             if (readByte == Convert.ToByte('$'))
                             {
                                 readState = ReadState.Preamble;
-                            }
-                            else
-                            {
-                                Debug.WriteLine("Unknown Token reading Direction");
-                                readState = ReadState.Idle;
                             }
                             break;
 
@@ -260,7 +414,6 @@ namespace MultiWiiDrone
                             }
                             else
                             {
-                                Debug.WriteLine("Unknown token reading Preamble");
                                 readState = ReadState.Idle;
                             }
                             break;
@@ -268,22 +421,23 @@ namespace MultiWiiDrone
                         case ReadState.Direction:
                             if (readByte == Convert.ToByte('>'))
                             {
-                                direction = MessageDirection.Inbound;
+                                //direction = MessageDirection.Inbound;
                             }
                             else if (readByte == Convert.ToByte('<'))
                             {
-                                direction = MessageDirection.Outbound;
+                                //direction = MessageDirection.Outbound;
                             }
                             else if (readByte == Convert.ToByte('!'))
                             {
-                                Debug.WriteLine("Flight controlle reports an unsupported command");
-                                readState = ReadState.Idle;
+                                Debug.WriteLine("Flight controller reports an unsupported command");
                             }
                             else
                             {
-                                Debug.WriteLine("Unknown token reading Direction");
-                                readState = ReadState.Idle;
+                                Debug.WriteLine("Unknown token reading Direction - " + readByte.ToString("x"));
                             }
+
+                            // Advance anyway;
+                            readState = ReadState.Length;
                             break;
 
                         case ReadState.Length:
@@ -317,14 +471,17 @@ namespace MultiWiiDrone
                             break;
 
                         case ReadState.ProcessPayload:
+                            specifiedChecksum = readByte;
+                            if (specifiedChecksum != checksum)
+                            {
+                                Debug.WriteLine("Checksum failed: Seen " + checksum.ToString() + "but expected " + specifiedChecksum.ToString());
+                            }
                             processMessage(opcode, payload, messageLengthExpectation);
-
+                            readState = ReadState.Idle;
+                            opcode = MSP_Op.None;
+                            messageIndex = 0;
                             break;
-
-
                     }
-                    payload[offset] = reader.ReadByte();
-
                 }
             });
         }
@@ -344,8 +501,15 @@ namespace MultiWiiDrone
 
         void processMessage(MSP_Op code, byte[] bytes, byte length)
         {
+            Debug.WriteLine("message received: " + code.ToString());
+
             switch (code)
             {
+                case MSP_Op.Identify:
+                    {
+                        Debug.WriteLine("Received Identity if you care");
+                    }
+                    break;
                 case MSP_Op.RawIMU:
                     {
                         imu.accelerometer.X = BitConverter.ToInt16(bytes, 0) / 512.0f;
@@ -391,6 +555,8 @@ namespace MultiWiiDrone
                         {
                             receiver[Channels.Arm] = BitConverter.ToUInt16(bytes, 8);
                         }
+
+                        ChannelDelegate?.Invoke();
                     }
                     break;
             }

@@ -27,27 +27,27 @@ namespace MultiWiiDrone
             await msp.connect();
         }
 
-        void setThrottle(double amount)
+        public void setThrottle(double amount)
         {
-
+            msp.Throttle = amount;
         }
 
-        void setYaw(double amount)
+        public void setYaw(double amount)
         {
-
+            msp.Yaw = amount;
         }
 
-        void setPitch(double amount)
+        public void setPitch(double amount)
         {
-
+            msp.Pitch = amount;
         }
 
-        void setRoll(double amount)
+        public void setRoll(double amount)
         {
-
+            msp.Roll = amount;
         }
 
-        void setArm(bool armed)
+        public void setArm(bool armed)
         {
             msp.ToggleArm();
         }
