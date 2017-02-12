@@ -44,6 +44,15 @@
   </Applications>
 
   <Capabilities>
-    <Capability Name="internetClient" />
+      <Capability Name="privateNetworkClientServer"/>
+      <Capability Name="internetClient" />
+      <Capability Name="internetClientServer" />
+      <DeviceCapability Name="serialcommunication">
+          <Device Id="any">
+              <Function Type="name:serialPort" />
+          </Device>
+      </DeviceCapability>
+      <DeviceCapability Name="microphone" />
+      <DeviceCapability Name="webcam" />
   </Capabilities>
 </Package>

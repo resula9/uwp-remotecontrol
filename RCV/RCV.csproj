@@ -18,7 +18,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>RCV_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>82B42540D01A8D6A270A434C530ED1E762DA256E</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>50022FB0EB2BB20F38639CB582DFC2F13BC3EFCB</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
@@ -132,6 +132,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\com.ooeygui.remotecontrolvehicle\com.ooeygui.remotecontrolvehicle.vcxproj">
+      <Project>{ce28cdff-df2b-45b5-a9d6-1a236f7f7407}</Project>
+      <Name>com.ooeygui.remotecontrolvehicle</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RCVNuget\RCVNuget.csproj">
       <Project>{195a3846-1405-47c8-aa8d-6ef1097d752c}</Project>
       <Name>RCVNuget</Name>

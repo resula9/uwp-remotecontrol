@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transmitter", "Transmitter\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devistator", "Devistator\Devistator.csproj", "{16477150-9515-42B6-81CF-D86D54E53A4F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "com.ooeygui.remotecontrolvehicle", "com.ooeygui.remotecontrolvehicle\com.ooeygui.remotecontrolvehicle.vcxproj", "{597D277D-547A-4480-A2BA-4A72E55551C2}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiWiiDrone", "MultiWiiDrone\MultiWiiDrone.csproj", "{4764D336-E831-4D3A-AE85-354E88AC3874}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "com.ooeygui.remotecontrolvehicle", "com.ooeygui.remotecontrolvehicle\com.ooeygui.remotecontrolvehicle.vcxproj", "{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,18 +90,6 @@ Global
 		{16477150-9515-42B6-81CF-D86D54E53A4F}.Release|x86.ActiveCfg = Release|x86
 		{16477150-9515-42B6-81CF-D86D54E53A4F}.Release|x86.Build.0 = Release|x86
 		{16477150-9515-42B6-81CF-D86D54E53A4F}.Release|x86.Deploy.0 = Release|x86
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|ARM.ActiveCfg = Debug|ARM
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|ARM.Build.0 = Debug|ARM
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|x64.ActiveCfg = Debug|x64
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|x64.Build.0 = Debug|x64
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|x86.ActiveCfg = Debug|Win32
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Debug|x86.Build.0 = Debug|Win32
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|ARM.ActiveCfg = Release|ARM
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|ARM.Build.0 = Release|ARM
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|x64.ActiveCfg = Release|x64
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|x64.Build.0 = Release|x64
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|x86.ActiveCfg = Release|Win32
-		{597D277D-547A-4480-A2BA-4A72E55551C2}.Release|x86.Build.0 = Release|Win32
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Debug|ARM.ActiveCfg = Debug|ARM
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Debug|ARM.Build.0 = Debug|ARM
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -120,6 +108,18 @@ Global
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Release|x86.ActiveCfg = Release|x86
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Release|x86.Build.0 = Release|x86
 		{4764D336-E831-4D3A-AE85-354E88AC3874}.Release|x86.Deploy.0 = Release|x86
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|ARM.ActiveCfg = Debug|ARM
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|ARM.Build.0 = Debug|ARM
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|x64.ActiveCfg = Debug|x64
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|x64.Build.0 = Debug|x64
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|x86.ActiveCfg = Debug|Win32
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Debug|x86.Build.0 = Debug|Win32
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|ARM.ActiveCfg = Release|ARM
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|ARM.Build.0 = Release|ARM
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|x64.ActiveCfg = Release|x64
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|x64.Build.0 = Release|x64
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|x86.ActiveCfg = Release|Win32
+		{CE28CDFF-DF2B-45B5-A9D6-1A236F7F7407}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
-      <UniqueIdentifier>490a258b-aa05-4ac8-85da-7ab010a891d4</UniqueIdentifier>
+      <UniqueIdentifier>7e557b4d-39a3-4234-b3c0-767982289a7a</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>

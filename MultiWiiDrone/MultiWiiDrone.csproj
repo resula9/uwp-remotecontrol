@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{4764d336-e831-4d3a-ae85-354e88ac3874}</ProjectGuid>
+    <ProjectGuid>{4764D336-E831-4D3A-AE85-354E88AC3874}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MultiWiiDrone</RootNamespace>
@@ -16,9 +16,8 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    
     <PackageCertificateKeyFile>MultiWiiDrone_TemporaryKey.pfx</PackageCertificateKeyFile>
-    
+    <PackageCertificateThumbprint>E05DB4C989EA8B8D665F4F856287B7075D071BE2</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -100,15 +99,14 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MSP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    
     <None Include="MultiWiiDrone_TemporaryKey.pfx" />
-    
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Default.rd.xml" />
@@ -130,11 +128,19 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  
+  <ItemGroup>
+    <ProjectReference Include="..\com.ooeygui.remotecontrolvehicle\com.ooeygui.remotecontrolvehicle.vcxproj">
+      <Project>{ce28cdff-df2b-45b5-a9d6-1a236f7f7407}</Project>
+      <Name>com.ooeygui.remotecontrolvehicle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RCVNuget\RCVNuget.csproj">
+      <Project>{195a3846-1405-47c8-aa8d-6ef1097d752c}</Project>
+      <Name>RCVNuget</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
-
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

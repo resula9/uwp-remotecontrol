@@ -27,7 +27,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{597d277d-547a-4480-a2ba-4a72e55551c2}</ProjectGuid>
+    <ProjectGuid>{ce28cdff-df2b-45b5-a9d6-1a236f7f7407}</ProjectGuid>
     <Keyword>WindowsRuntimeComponent</Keyword>
     <ProjectName>com.ooeygui.remotecontrolvehicle</ProjectName>
     <RootNamespace>com.ooeygui.remotecontrolvehicle</RootNamespace>

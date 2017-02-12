@@ -160,7 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\com.ooeygui.remotecontrolvehicle\com.ooeygui.remotecontrolvehicle.vcxproj">
-      <Project>{597d277d-547a-4480-a2ba-4a72e55551c2}</Project>
+      <Project>{ce28cdff-df2b-45b5-a9d6-1a236f7f7407}</Project>
       <Name>com.ooeygui.remotecontrolvehicle</Name>
     </ProjectReference>
     <ProjectReference Include="..\RCVNuget\RCVNuget.csproj">
