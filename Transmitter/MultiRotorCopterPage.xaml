@@ -8,8 +8,19 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Slider x:Name="ThrottleSlider" HorizontalAlignment="Left" Margin="524,10,0,0" VerticalAlignment="Top" Width="48" Orientation="Vertical" Height="340" Minimum="-1" Maximum="1" Value="{Binding throttle, Mode=TwoWay}" StepFrequency="0.01" SmallChange="0.01"/>
-        <Slider x:Name="SteeringSlider" HorizontalAlignment="Left" Margin="60,146,0,0" VerticalAlignment="Top" Width="186" Minimum="-60" Maximum="60" Value="{Binding steering, Mode=TwoWay}"/>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="ArmButton" Content="Arm" Click="ArmButton_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Viewbox  HorizontalAlignment="Center" VerticalAlignment="Center" Height="468" Width="228" Margin="66,86">
+                    <local:VirtualJoystick x:Name="JoystickLeft" HorizontalAlignment="Center" Height="400" Width="400" VerticalAlignment="Center" StickMove="VirtualJoystick_LeftStickMove" Loaded="Joystick_Loaded"/>
+                </Viewbox>
+                <Viewbox  HorizontalAlignment="Center" VerticalAlignment="Center" Height="468" Width="228" Margin="66,86">
+                    <local:VirtualJoystick x:Name="JoystickRight" HorizontalAlignment="Center" Height="400" Width="400" VerticalAlignment="Center" StickMove="VirtualJoystick_RightStickMove" Loaded="Joystick_Loaded"/>
+                </Viewbox>
+            </StackPanel>
+        </StackPanel>
 
     </Grid>
 </Page>

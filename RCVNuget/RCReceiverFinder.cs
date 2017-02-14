@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using Windows.ApplicationModel.Core;
 using Windows.Devices.Enumeration;
+using System.IO;
 
 namespace RCVNuget
 {
@@ -59,9 +60,18 @@ namespace RCVNuget
         {
             try
             {
-                //AllJoynAboutDataView aboutData = await bus.GetAboutDataAsync(await AllJoynServiceInfo.FromIdAsync(args.Id));
+                remotecontrolvehicleConsumer consumer = null;
+                try
+                {
+                    consumer = await remotecontrolvehicleConsumer.FromIdAsync(args.Id, bus);
+                }
+                catch (FileNotFoundException)
+                {
+                    // Give it some time and try again.
+                    await Task.Delay(1000);
 
-                var consumer = await remotecontrolvehicleConsumer.FromIdAsync(args.Id, bus);
+                    consumer = await remotecontrolvehicleConsumer.FromIdAsync(args.Id, bus);
+                }
 
                 if (consumer != null)
                 {

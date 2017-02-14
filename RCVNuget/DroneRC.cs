@@ -132,8 +132,8 @@ namespace RCVNuget
             switch (channelId)
             {
                 case 4:
-                    arm = value == 0;
-                    implementation.setArm(value == 0);
+                    arm = value == 1;
+                    implementation.setArm(arm);
                     break;
             }
         }

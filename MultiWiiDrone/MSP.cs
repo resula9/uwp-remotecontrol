@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
+
+// 1. A robot may not injure a human being or, through inaction, allow a human being to come to harm.
+// 2. A robot must obey orders given it by human beings except where such orders would conflict with the First Law.
+// 3. A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.
+//          - Isaac Asimov
 
 // Implemenation of the MultiWii serial protocol
 // http://www.multiwii.com/wiki/index.php?title=Multiwii_Serial_Protocol
@@ -23,6 +29,8 @@ namespace MultiWiiDrone
             public Vector3 magnetometer;
         };
 
+        public IMU imu;
+
         public enum Channels
         {
             Roll,
@@ -30,14 +38,10 @@ namespace MultiWiiDrone
             Yaw,
             Throttle,
             Arm,
+            Aux1,
             Aux2,
-            Aux3,
             Aux4
         }
-
-        public IMU imu;
-
-        public Dictionary<Channels, UInt16> receiver = new Dictionary<Channels, UInt16>();
 
         public delegate void RCChannelsUpdatedDelegate();
 
@@ -78,7 +82,7 @@ namespace MultiWiiDrone
 
             // todo: rest of cleanflight extensions.
 
-            VoltMeter = 131,
+            VoltMeter = 128,
             BatteryState = 130,
 
             // original msp commands
@@ -99,23 +103,30 @@ namespace MultiWiiDrone
         private DataWriter writer = null;
         private DataReader reader = null;
 
-        const UInt16 kStickMin = 1000;
+        const UInt16 kStickMin = 1100;
         const UInt16 kStickMid = 1500;
-        const UInt16 kStickMax = 2000;
+        const UInt16 kStickMax = 1900;
         const UInt16 kChannelArmValue = 1500;
-        const UInt16 kChannelDisarmValue = 800;
+        const UInt16 kChannelDisarmValue = 900;
         const UInt16 kChannelCount = 8;
+
+        // heartbeat
+        UInt16 roll = kStickMid;
+        UInt16 pitch = kStickMid;
+        UInt16 yaw = kStickMid;
+        UInt16 throttle = kStickMin;
+        UInt16 aux1 = kStickMid;
+        UInt16 aux2 = kStickMid;
+        UInt16 arm = kChannelDisarmValue;
+        UInt16 aux4 = kStickMid;
+
+        bool channelChanged = true;     // reset to defaults
+        bool sendIdent = true;
+        bool sendVariant = true;
+        bool sendGetRC = false;
 
         public MSP()
         {
-            receiver[Channels.Roll] = kStickMid;
-            receiver[Channels.Pitch] = kStickMid;
-            receiver[Channels.Yaw] = kStickMid;
-            receiver[Channels.Throttle] = kStickMin;
-            receiver[Channels.Arm] = kStickMin;
-            receiver[Channels.Aux2] = kStickMid;
-            receiver[Channels.Aux3] = kStickMid;
-            receiver[Channels.Aux4] = kStickMid;
         }
 
         public async Task connect(string identifyingSubStr = "UART0")
@@ -140,22 +151,77 @@ namespace MultiWiiDrone
                         _device.Handshake = SerialHandshake.None;
                         _device.ReadTimeout = TimeSpan.FromSeconds(5);
                         _device.WriteTimeout = TimeSpan.FromSeconds(5);
+                        _device.IsRequestToSendEnabled = false;
+
 
                         writer = new DataWriter(_device.OutputStream);
                         reader = new DataReader(_device.InputStream);
                         reader.InputStreamOptions = InputStreamOptions.Partial;
 
+                        startHeartbeat();
                         startWatchingResponses();
-
-
-                        await sendIdent();
-                        await getRCState();
 
                         return;
                     }
                 }
             }
         }
+
+        private void startHeartbeat()
+        {
+            Task t = Task.Run(async () =>
+            {
+                while (true)
+                {
+                    if (!channelChanged && !sendIdent && !sendVariant && !sendGetRC)
+                    {
+                        await sendMessage(MSP_Op.Status);
+                    }
+
+                    if (channelChanged)
+                    {
+                        MemoryStream stream = new MemoryStream();
+                        using (BinaryWriter byteWriter = new BinaryWriter(stream))
+                        {
+                            byteWriter.Write(roll);
+                            byteWriter.Write(pitch);
+                            byteWriter.Write(yaw);
+                            byteWriter.Write(throttle);
+                            byteWriter.Write(aux1);
+                            byteWriter.Write(aux2);
+                            byteWriter.Write(arm);
+                            byteWriter.Write(aux4);
+                        }
+
+                        var payload = stream.ToArray();
+                        await sendMessage(MSP_Op.SetRawRCChannels, payload);
+
+                        channelChanged = false;
+                    }
+
+                    if (sendIdent)
+                    {
+                        await sendMessage(MSP_Op.Identify);
+                        sendIdent = false;
+                    }
+
+                    if (sendVariant)
+                    {
+                        await sendMessage(MSP_Op.FlightControllerVariant);
+                        sendVariant = false;
+                    }
+
+                    if (sendGetRC)
+                    {
+                        await sendMessage(MSP_Op.RC);
+                        sendGetRC = false;
+                    }
+
+                    await Task.Delay(100);
+                }
+            });
+        }
+
 
         enum ReadState
         {
@@ -177,17 +243,21 @@ namespace MultiWiiDrone
 
         public void Arm()
         {
-            setChannel(Channels.Arm, kChannelArmValue);
+            Debug.WriteLine("S: ARMED");
+            arm = kChannelArmValue;
+            channelChanged = true;
         }
 
         public void Disarm()
         {
-            setChannel(Channels.Arm, kChannelDisarmValue);
+            Debug.WriteLine("S: DISARMED");
+            arm = kChannelDisarmValue;
+            channelChanged = true;
         }
 
         public void ToggleArm()
         {
-            if (receiver[Channels.Arm] == kChannelArmValue)
+            if (arm == kChannelArmValue)
             {
                 Disarm();
             }
@@ -201,10 +271,7 @@ namespace MultiWiiDrone
         {
             get
             {
-                var rawThrottle = receiver[Channels.Throttle];
-                double throttle = (rawThrottle - kStickMin) / (double)(kStickMax - kStickMin);
-
-                return throttle;
+                return (throttle - kStickMin) / (double)(kStickMax - kStickMin);
             }
 
             set
@@ -218,10 +285,7 @@ namespace MultiWiiDrone
         {
             get
             {
-                var rawYaw = receiver[Channels.Yaw];
-                double yaw = (rawYaw - kStickMin) / (double)(kStickMax - kStickMin);
-
-                return yaw;
+                return (yaw - kStickMin) / (double)(kStickMax - kStickMin);
             }
 
             set
@@ -235,10 +299,7 @@ namespace MultiWiiDrone
         {
             get
             {
-                var rawRoll = receiver[Channels.Roll];
-                double roll = (rawRoll - kStickMin) / (double)(kStickMax - kStickMin);
-
-                return roll;
+                return (roll - kStickMin) / (double)(kStickMax - kStickMin);
             }
 
             set
@@ -252,10 +313,7 @@ namespace MultiWiiDrone
         {
             get
             {
-                var rawPitch = receiver[Channels.Pitch];
-                double pitch = (rawPitch - kStickMin) / (double)(kStickMax - kStickMin);
-
-                return pitch;
+                return (pitch - kStickMin) / (double)(kStickMax - kStickMin);
             }
 
             set
@@ -263,16 +321,6 @@ namespace MultiWiiDrone
 
                 setChannel(Channels.Pitch, value);
             }
-        }
-
-        private async Task sendIdent()
-        {
-            await sendMessage(MSP_Op.Identify);
-        }
-
-        private async Task getRCState()
-        {
-            await sendMessage(MSP_Op.RC);
         }
 
         private async Task sendMessage(MSP_Op op, byte[] bytes = null)
@@ -324,27 +372,38 @@ namespace MultiWiiDrone
                 return;
             }
 
-            Task t = Task.Run(async () =>
+            switch (channel)
             {
-                receiver[channel] = value;
-                MemoryStream stream = new MemoryStream();
-                BinaryWriter byteWriter = new BinaryWriter(stream);
-                writer.WriteByte(36);
-                writer.WriteByte(77);
-                writer.WriteByte(60);
-                writer.WriteByte(2);
-                writer.WriteByte((byte)MSP_Op.RC);
+                case Channels.Roll:
+                    roll = value;
+                    break;
+                case Channels.Pitch:
+                    pitch = value;
+                    break;
+                case Channels.Yaw:
+                    yaw = value;
+                    break;
+                case Channels.Throttle:
+                    throttle = value;
+                    break;
+                case Channels.Arm:
+                    arm = value;
+                    break;
+                case Channels.Aux1:
+                    aux1 = value;
+                    break;
+                case Channels.Aux2:
+                    aux2 = value;
+                    break;
+                case Channels.Aux4:
+                    aux4 = value;
+                    break;
+            }
 
-                var values = receiver.Values.ToArray();
+            Debug.WriteLine($"S: {channel.ToString()} - {value}");
 
-                for (UInt16 i = 0; i < kChannelCount; i++)
-                {
-                    byteWriter.Write(values[i]);
-                }
+            channelChanged = true;
 
-                await sendMessage(MSP_Op.SetRawRCChannels, stream.ToArray());
-                await getRCState();
-            });
         }
 
         private void setThrottleChannel(Channels channel, double value)
@@ -472,11 +531,14 @@ namespace MultiWiiDrone
 
                         case ReadState.ProcessPayload:
                             specifiedChecksum = readByte;
-                            if (specifiedChecksum != checksum)
+                            if (specifiedChecksum == checksum)
                             {
-                                Debug.WriteLine("Checksum failed: Seen " + checksum.ToString() + "but expected " + specifiedChecksum.ToString());
+                                processMessage(opcode, payload, messageLengthExpectation);
                             }
-                            processMessage(opcode, payload, messageLengthExpectation);
+                            else
+                            { 
+                                Debug.WriteLine($"Processing Opcode {opcode} Checksum failed: Seen {checksum} but expected {specifiedChecksum}");
+                            }
                             readState = ReadState.Idle;
                             opcode = MSP_Op.None;
                             messageIndex = 0;
@@ -501,15 +563,48 @@ namespace MultiWiiDrone
 
         void processMessage(MSP_Op code, byte[] bytes, byte length)
         {
-            Debug.WriteLine("message received: " + code.ToString());
+            //Debug.WriteLine("message received: " + code.ToString());
 
             switch (code)
             {
+                case MSP_Op.Status:
+                    {
+                        ushort pidDeltaUs = BitConverter.ToUInt16(bytes, 0);
+                        ushort i2cError = BitConverter.ToUInt16(bytes, 2);
+                        ushort activeSensors = BitConverter.ToUInt16(bytes, 4);
+                        ushort mode = BitConverter.ToUInt16(bytes, 6);
+                        ushort profile = BitConverter.ToUInt16(bytes, 10);
+                        ushort cpuload = BitConverter.ToUInt16(bytes, 11);
+                        ushort gyroDeltaUs = BitConverter.ToUInt16(bytes, 13);
+
+                        if ((mode & 0x1) == 1)
+                        {
+                            if (arm != kChannelArmValue)
+                            {
+                                Debug.WriteLine("Ack! integrity error");
+                            }
+                        }
+                    }
+                    break;
                 case MSP_Op.Identify:
                     {
                         Debug.WriteLine("Received Identity if you care");
                     }
                     break;
+
+                case MSP_Op.FlightControllerVariant:
+                    {
+                        StringBuilder builder = new StringBuilder();
+                        ASCIIEncoding ai = new ASCIIEncoding();
+                        for (int i = 0; i < 4; i++)
+                        {
+                            builder.Append(ai.GetString(bytes, i, 1));
+                        }
+
+                        Debug.WriteLine($"Flight Controller ID :{builder.ToString()}");
+                    }
+                    break;
+
                 case MSP_Op.RawIMU:
                     {
                         imu.accelerometer.X = BitConverter.ToInt16(bytes, 0) / 512.0f;
@@ -528,32 +623,47 @@ namespace MultiWiiDrone
 
                 case MSP_Op.RC:
                     {
-                        // I'm sure there is meta, but I'm too tired to think of it.
+                        // Should only happen at startup...
                         int activeChannels = length / 2;
 
                         if (activeChannels > 0)
                         {
-                            receiver[Channels.Roll] = BitConverter.ToUInt16(bytes, 0);
+                            roll = BitConverter.ToUInt16(bytes, 0);
                         }
 
                         if (activeChannels > 1)
                         {
-                            receiver[Channels.Pitch] = BitConverter.ToUInt16(bytes, 2);
+                            pitch = BitConverter.ToUInt16(bytes, 2);
                         }
 
                         if (activeChannels > 2)
                         {
-                            receiver[Channels.Yaw] = BitConverter.ToUInt16(bytes, 4);
+                            yaw = BitConverter.ToUInt16(bytes, 4);
                         }
 
                         if (activeChannels > 3)
                         {
-                            receiver[Channels.Throttle] = BitConverter.ToUInt16(bytes, 6);
+                            throttle = BitConverter.ToUInt16(bytes, 6);
                         }
 
                         if (activeChannels > 4)
                         {
-                            receiver[Channels.Arm] = BitConverter.ToUInt16(bytes, 8);
+                            aux1 = BitConverter.ToUInt16(bytes, 8);
+                        }
+
+                        if (activeChannels > 5)
+                        {
+                            aux2 = BitConverter.ToUInt16(bytes, 10);
+                        }
+
+                        if (activeChannels > 6)
+                        {
+                            arm = BitConverter.ToUInt16(bytes, 12);
+                        }
+
+                        if (activeChannels > 7)
+                        {
+                            aux4 = BitConverter.ToUInt16(bytes, 14);
                         }
 
                         ChannelDelegate?.Invoke();

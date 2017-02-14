@@ -50,6 +50,14 @@ namespace Transmitter
             finder.discovered += Receiver_discovered;
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            finder.lost -= Receiver_lost;
+            finder.discovered -= Receiver_discovered;
+        }
+
         private void Receiver_discovered(object finder, RCReceiver receiver)
         {
             receivers.Add(receiver);
@@ -87,6 +95,9 @@ namespace Transmitter
                         break;
                     case DeviceType.Car:
                         this.Frame.Navigate(typeof(CarPage), receiver);
+                        break;
+                    case DeviceType.MultiRotorCopter:
+                        this.Frame.Navigate(typeof(MultiRotorCopterPage), receiver);
                         break;
 
                 }

@@ -119,6 +119,7 @@
     <Compile Include="TankPage.xaml.cs">
       <DependentUpon>TankPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VirtualJoystick.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -156,6 +157,10 @@
     <Page Include="TankPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VirtualJoystick.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

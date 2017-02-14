@@ -49,7 +49,14 @@ namespace MultiWiiDrone
 
         public void setArm(bool armed)
         {
-            msp.ToggleArm();
+            if (armed)
+            {
+                msp.Arm();
+            }
+            else
+            {
+                msp.Disarm();
+            }
         }
     }
 
